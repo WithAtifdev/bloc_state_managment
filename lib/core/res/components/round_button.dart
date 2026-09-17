@@ -1,0 +1,30 @@
+
+import 'package:flutter/material.dart';
+import '../colors/app_colors.dart';
+import 'loading_widget.dart';
+
+class RoundButton extends StatelessWidget {
+  final String title;
+  final bool loading;
+  final VoidCallback onPress;
+
+  const RoundButton({
+    super.key,
+    required this.title,
+    this.loading = false,
+    required this.onPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: onPress,
+        child: Center(
+            child: loading
+                ? const LoadingWidget()
+                : Text(
+              title,
+              style: const TextStyle(color: AppColors.whiteColor),
+            )));
+  }
+}

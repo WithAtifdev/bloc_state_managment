@@ -1,0 +1,40 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/res/components/round_button.dart';
+import '../../../core/res/constants/enums.dart';
+import '../../../core/res/extensions/flushbar_extensions.dart';
+import '../../../core/utils/routers/routes_name.dart';
+import '../login_bloc/login_bloc.dart';
+
+
+class SubmitButton extends StatelessWidget {
+  final formKey;
+  const SubmitButton({super.key, required this.formKey});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<LoginBloc, LoginStates>(
+      listenWhen: (current, previous) => current.loginApi.status != previous.loginApi.status,
+      listener: (context, state) {
+        if (state.loginApi.status == Status.error) {
+          context.flushBarErrorMessage(message: state.loginApi.message.toString());
+        }
+        if (state.loginApi.status == Status.completed) {
+          Navigator.pushNamedAndRemoveUntil(context, RoutesName.home, (route) => false);
+        }
+      },
+      builder: (context, state) {
+        return RoundButton(
+            title: 'Login',
+            loading: state.loginApi.status == Status.loading ? true  :false ,
+            onPress: (){
+              if (formKey.currentState.validate()) {
+                context.read<LoginBloc>().add(const LoginApi());
+              }
+            });
+      },
+
+    );
+  }
+}
